@@ -9,6 +9,39 @@ public class CameraControl : MonoBehaviour
     private float scale = 15f;
     private float rotation;
 
+    #region Rotation with mouse
+    // Код отсюда: https://youtu.be/jNvmp4SZj9c
+    
+    private float _mouseSensitivity = 0.1f;
+    private Vector3 _mousePreveousePos;
+    private float _rotationX;
+    private float _rotationY;
+
+    /// <summary>
+    /// Вращение камеры с помощью ПКМ. Код отсюда: https://youtu.be/jNvmp4SZj9c.
+    /// </summary>
+    void CustomRotation()
+    {
+        Vector3 _mouseDelta;
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            _mousePreveousePos = Input.mousePosition;
+        }
+
+        if (Input.GetMouseButton(1))
+        {
+            _mouseDelta = Input.mousePosition - _mousePreveousePos;
+            _mousePreveousePos = Input.mousePosition;
+
+            _rotationX -= _mouseDelta.y * _mouseSensitivity;
+            _rotationY += _mouseDelta.x * _mouseSensitivity;
+
+            transform.localEulerAngles = new Vector3(_rotationX, _rotationY, 0f);
+        }
+    }
+    #endregion
+
     #region XYZ
     private float X;
     private float Y;
@@ -29,8 +62,9 @@ public class CameraControl : MonoBehaviour
 
         ApproximationCalculating();
         SetScale();
-        camPos.position = new Vector3(X, Y, Z);        
+        camPos.position = new Vector3(X, Y, Z);
     }
+    
 
     private void CameraMove()
     {
@@ -48,7 +82,7 @@ public class CameraControl : MonoBehaviour
         float approximation = -1 * Input.mouseScrollDelta.y;
         float subY = Y + approximation * Mathf.Sin(rotation) * 5;
         float subZ = Z - approximation * Mathf.Cos(rotation) * 5;
-        if (subY > 80 || subY < 25)
+        if (subY > 50 || subY < 14)
             return;
         else
         {
